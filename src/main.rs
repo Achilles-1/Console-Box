@@ -1,15 +1,26 @@
-mod structs;
+mod colors;
+mod info;
+mod input;
 
 use colored::Colorize;
-use structs::{Input, Settings, VALID_COLORS};
+use colors::VALID_COLORS;
+use input::Input;
+
+struct Settings {
+    border_width: usize,
+    border_color: String,
+    bg: String,
+    width: usize,
+    height: usize,
+}
 
 fn main() {
     let mut settings = Settings {
         border_width: 0,
         border_color: "none".to_string(),
         bg: "white".to_string(),
-        width: 300,
-        height: 150,
+        width: 30,
+        height: 15,
     };
 
     println!("{}", "Welcome to console box".magenta().bold());
@@ -38,24 +49,18 @@ fn main() {
         settings.border_color = Input::color("Border Color", "blue");
     }
 
-    settings.bg = Input::color("Background", "none");
+    settings.bg = Input::color("Background", &settings.bg);
 
     let total_width = settings.border_width + settings.width;
-    let total_height = settings.height + settings.border_width;
+    let total_height = settings.border_width + settings.height;
 
     println!("\n\n{}", "Box Info:".bold());
-
-    print_info_item("Inner Width", settings.width.to_string());
-    print_info_item("Inner Height", settings.height.to_string());
-    println!();
-    print_info_item("Total Width", total_width.to_string());
-    print_info_item("Total Height", total_height.to_string());
-    println!();
-    print_info_item("Background Color", settings.bg.to_string());
-    println!();
-    print_info_item("Border Width", settings.border_width.to_string());
-    print_info_item("Border Color", settings.border_color.to_string());
-
+    info::print(
+        (settings.width, total_width),
+        (settings.height, total_height),
+        &settings.bg,
+        (settings.border_width, &settings.border_color),
+    );
     for i in 0..total_height {
         for j in 0..total_width {
             let mut ch: String = String::from("██");
@@ -74,9 +79,4 @@ fn main() {
         }
         println!();
     }
-}
-
-fn print_info_item(name: &str, value: String) {
-    let val = if value == "0" { "none" } else { value.as_str() };
-    println!("{}: {}", name.bright_blue(), val.bright_green());
 }

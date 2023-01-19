@@ -1,38 +1,21 @@
+use crate::colors::VALID_COLORS;
 use colored::Colorize;
 use std::io::stdin;
-pub const VALID_COLORS: [&str; 19] = [
-    "none",
-    "black",
-    "red",
-    "green",
-    "yellow",
-    "blue",
-    "magenta",
-    "purple",
-    "cyan",
-    "white",
-    "bright black",
-    "bright red",
-    "bright green",
-    "bright yellow",
-    "bright blue",
-    "bright magenta",
-    "bright purple",
-    "bright cyan",
-    "bright white",
-];
-
 pub struct Input;
 
 impl Input {
     pub fn raw(hint: &str, default_value: &str) -> String {
         let mut input = String::new();
-        println!("{hint} (Default: {}) > ", default_value.bright_green());
+        if default_value.trim() != "" {
+            println!("{hint} (Default: {}) >", default_value.bright_green());
+        } else {
+            println!("{hint} >");
+        }
 
         stdin()
             .read_line(&mut input)
             .expect("Error reading the line!");
-        if input.trim() == "" {
+        if input.trim() == "" && default_value.trim() != "" {
             println!(
                 "{}{}",
                 "Using default value: ".blue(),
@@ -71,12 +54,4 @@ impl Input {
             };
         }
     }
-}
-
-pub struct Settings {
-    pub border_width: usize,
-    pub border_color: String,
-    pub bg: String,
-    pub width: usize,
-    pub height: usize,
 }
